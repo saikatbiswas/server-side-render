@@ -14,6 +14,8 @@ module.exports = {
                     presets: [
                         //react files
                         'react',
+                        
+                        "es2015", 
                         // used to handling Acync code
                         'stage-0',
                         // run all transform rules needs to meet the requirments of the latest two browser version
