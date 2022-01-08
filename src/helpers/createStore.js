@@ -1,23 +1,25 @@
-import { createStore, applyMiddleware } from "redux";
-import createSagaMiddleware from "redux-saga";
-import reducers from "../client/store/reducers";
-import rootSaga from "../client/store/sagas"; 
 
-export default ()=> {
-    // const composeEnhancers =  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-    const sagaMiddleware = createSagaMiddleware();
-    // const enhancer = composeEnhancers(
-    //     applyMiddleware(sagaMiddleware)
-    // );
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import axios from 'axios';
+import reducers from "../client/store/reducers";
+
+export default (req)=> {
+  console.log('cook',req.cookies['x-access-token']);
+  axios.defaults.headers.post['Content-Type'] = 'application/json';
+  const axiosInstance = axios.create({
+    // baseURL: 'http://react-ssr-api.herokuapp.com',
+    baseURL: 'http://localhost:3001/api',
+    // headers: { cookie: req.get('cookie') || '' }
+    headers: {'Authorization': `Bearer ${req.cookies['x-access-token']}` || '' }
+  });
 
     const store = createStore(
-        reducers,
-        {},
-        applyMiddleware(sagaMiddleware)
-      );
+      reducers,
+      {},
+      applyMiddleware(thunk.withExtraArgument(axiosInstance))
+    );
 
-    // const store = createStore(reducers, enhancer);
-    sagaMiddleware.run(rootSaga);
 
     return store;
 };
